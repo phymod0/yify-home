@@ -1,4 +1,3 @@
 - Complete header files in yts_proxy/
+	o proxy-ctl: client controller
 - Implement the trie data structure in utils/
-- Auto-update the database file on addition/removal of an entry (and check
-  which other functions it should be done on)

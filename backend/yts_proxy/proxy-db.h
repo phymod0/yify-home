@@ -41,21 +41,31 @@ db_status_t db_status_code(const char* status);
  */
 typedef struct {
 	trie_t* title_trie;
+	FILE* db_fd;
+	char* db_fp;
 } db_ctx_t;
 
-/** Allocate and initialize the database context.
+/** Load the database from a file.
  *
- * Must be destroyed with <code>db_destroy()</code>.
+ * <code>*db_ctx</code> will point to a newly allocated database context which
+ * must be freed explicitly via <code>db_destroy()</code>. The original context
+ * pointer will be overwritten and must also be freed before calling
+ * <code>db_load()</code> if necessary.
  *
- * @returns Pointer to a context or <code>NULL</code> if the allocation fails.
+ * Files that do not exist as described by <code>db_fp</code> will be created.
+ *
+ * @param db_ctx Pointer to database context pointer to overwrite
+ * @param db_fp Database file path
+ * @returns Status code.
+ * @see db_status_t for all status codes.
  */
-db_ctx_t* db_create(void);
+db_status_t db_load(db_ctx_t** const db_ctx, const char* db_fp);
 
 /** Deallocate the database context.
  *
  * Frees all entries associated with the database.
  *
- * @param db_ctx Database context created with <code>db_create()</code>
+ * @param db_ctx Database context created with <code>db_load()</code>
  */
 void db_destroy(db_ctx_t* db_ctx);
 
@@ -237,30 +247,6 @@ typedef struct {
  * @param orders Array of <code>db_entry_t</code> orders
  */
 void db_sort_results(db_result_t* result, const db_order_t* orders);
-
-
-/** Save the database to a file.
- *
- * @param db_ctx Pointer to database context
- * @param db_file Database file path
- * @returns Status code.
- * @see <code>db_status_t</code> for all status codes.
- */
-db_status_t db_dump(const db_ctx_t* const db_ctx, const char* db_file);
-
-/** Load the database from a file.
- *
- * <code>*db_ctx</code> will point to a newly allocated database context which
- * must be freed explicitly via <code>db_destroy()</code>. The original context
- * pointer will be overwritten and must also be freed before calling
- * <code>db_load()</code> if necessary.
- *
- * @param db_ctx Pointer to database context pointer to overwrite
- * @param db_file Database file path
- * @returns Status code.
- * @see db_status_t for all status codes.
- */
-db_status_t db_load(db_ctx_t** const db_ctx, const char* db_file);
 
 
 #endif /* PROXY_DB */
