@@ -1,0 +1,77 @@
+TODO: Complete and test each module
+
+- Serialization module [Day 1]
+	o Template functions for de/serializing classes and primitive types
+		(With the exception of floats)
+		+ Unsigned primitive types
+		+ Signed primitive types
+		+ C-strings
+		+ Arrays
+		+ General objects with de/serialize() methods defined
+- Trie class [Day 2]
+	o Duplicate of C trie library
+- Movie class [Day 3, Day 7]
+	(Submodules (outside class)) [Day 3, Day 5]
+	o Genre set subclass [Day 3]
+		+ 32 genre bitfields
+		(Methods)
+		+ include(enum {genre_1, genre_2... genre_n}) method
+		+ matches(const Movie& m) method
+	o Preference subclass [Day 4]
+		+ Title substring
+		+ Genre OR-list
+		+ Genre OR-blacklist
+		+ Min/max rating
+		+ Min/max year
+		(Methods)
+		+ Setters for all variables
+		+ operator()(const Movie& m) to return satisfiability
+	o Order subclass [Day 5]
+		+ Order types (decide defaults)
+			= Rating
+			= Year of upload
+			= Title (already sorted in trie?) (remove)
+			= Time of release
+		+ Order weight (a/descending, irrelevant)
+		(Methods)
+		+ addOrdering(ord_type, ord_weight)
+		+ operator()(const Movie& m1, const Movie& m2) to return order
+	(Main module) [Day 6, Day 7]
+	(Data)
+	o YTS id
+	o IMDB title
+	o IMDB summary
+	o Genre set (list)
+	o Major/minor rating
+	o Year of release
+	o Time of upload
+	(Methods)
+	o Constructor to read from JSON and JSON serializer [Day 6]
+	o load(FILE* fd) and write(FILE* fd) [Day 7]
+- MovieList class [Day 8]
+	o Linked list
+	(Methods)
+	o addMovie(Movie m) (or +=)
+	o sort(const Movie::Order& ord)
+	o loadFile
+- YIFY interface module [Day 9, Day 10]
+	o Internal MovieList
+	o Flush upon every write
+	(Methods)
+	o loadFile
+	o start
+	o stop
+	o hasNew
+	o getList(const Movie::Preference& pref, const Movie::Order& ord)
+- Transmissions interface module [Day 11, Day 12]
+	o availableMemory()
+	o startDownload()
+	o pauseDownload()
+	o cancelDownload()
+	o deleteFile()
+	o getProgress()
+	o getFilePath()
+- Main CGI request handler [Day 13]
+	o Receive constraint and order from CGI application set
+- CGI application set: [Day 14]
+	o Send constraint and order to main request handler
