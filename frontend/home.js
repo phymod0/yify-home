@@ -12,6 +12,7 @@ const colors = {
 	grey: "#282828",
 	lightgrey: "#484848",
 	white: "#FFFFFF",
+	black: "#000000",
 }
 
 
@@ -36,7 +37,7 @@ class SearchQuery {
 	setOrder(order) { this.state.orderBy = order }
 
 	getPage(pageNum, renderPage, reportError) {
-		let init = "https://yts.lt/api/v2/list_movies.json?limit=10&page=" + pageNum.toString()
+		let init = "https://yts.lt/api/v2/list_movies.json?limit=16&page=" + pageNum.toString()
 		if (this.state.queryTerm)
 			init += "&query_term=" + this.state.queryTerm
 		if (this.state.minRating)
@@ -468,7 +469,113 @@ class SearchPanel extends React.Component {
 	}
 }
 
-/* TODO: Time to display the thumbnails */
+/* TODO: Movie download page */
+class MoviePortrait extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			mouseOver: false,
+		}
+	}
+
+	getStyle() {
+		const outset = this.state.mouseOver ? 15 : 0
+		return {
+			width: "80%",
+			height: "70%",
+			border: `2px solid white`,
+			borderRadius: "3px",
+			boxShadow: `0 0 ${outset}px 0 ${colors.green}`,
+			cursor: "pointer",
+		}
+	}
+
+	render() {
+		return e(
+			'img',
+			{
+				style: this.getStyle(),
+				src: this.props.imageLink,
+				onMouseOver: () => { this.setState({mouseOver: true}) },
+				onMouseOut: () => { this.setState({mouseOver: false}) },
+			},
+		)
+	}
+}
+
+class MovieTitle extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	getStyle() {
+		return {
+			width: "100%",
+			height: "10%",
+			textAlign: "center",
+			whiteSpace: "nowrap",
+			overflow: "hidden",
+		}
+	}
+
+	render() {
+		return e(
+			'div',
+			{style: this.getStyle()},
+			e('font', {color: colors.white}, this.props.title),
+		)
+	}
+}
+
+class DownloadProgressBar extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	getStyle() {
+		return {
+			width: "100%",
+			height: "10%",
+			display: "block",
+		}
+	}
+
+	renderDone() {
+		const percentage = this.props.percentage
+		const done = percentage == 100
+		const barColor = done ? colors.green : colors.cyan
+		const endRadii = done ? 5 : 0
+		return e('div', {
+			style: {
+				backgroundColor: colors.black,
+				borderRadius: `5px ${endRadii}px ${endRadii}px 5px`,
+				width: `${percentage}%`,
+				height: "100%",
+				boxShadow: `inset 0 0 20px 0 ${barColor}`,
+			},
+		})
+	}
+
+	renderRemaining() {
+		return e('div', {
+			style: {
+				backgroundColor: colors.black,
+				borderRadius: `0 5px 5px 0`,
+				width: `${100 - this.props.percentage}%`,
+				height: "100%",
+			},
+		})
+	}
+
+	render() {
+		return e(
+			'div',
+			{style: this.getStyle()},
+			this.renderDone(),
+		)
+	}
+}
+
 class MovieItem extends React.Component {
 	constructor(props) {
 		super(props)
@@ -478,15 +585,30 @@ class MovieItem extends React.Component {
 		return {
 			position: "relative",
 			zIndex: 0,
+			width: "12.5%",
+			height: "45%",
 		}
 	}
 
 	render() {
 		const movieData = this.props.movieData
 		return e(
-			'p',
+			'div',
 			{style: this.getStyle()},
-			movieData.title_long
+			e(
+				'div',
+				{style: {padding: "5%", textAlign: "center"}},
+				e(MoviePortrait, {
+					imageLink: movieData.medium_cover_image,
+				}),
+				e(MovieTitle, {
+					title: movieData.title_long,
+				}),
+				/* TODO: Only when set for download */
+				e(DownloadProgressBar, {
+					percentage: 100,
+				}),
+			),
 		)
 	}
 }
@@ -500,8 +622,10 @@ class MovieList extends React.Component {
 	getStyle() {
 		return {
 			width: "100%",
-			height: "calc(100% - 1.5in)",
-			textAlign: "center",
+			height: "calc(100% - 1.5in - 0.34in)",
+			display: "flex",
+			flexWrap: "wrap",
+			marginTop: "0.33in",
 		}
 	}
 
@@ -514,7 +638,7 @@ class MovieList extends React.Component {
 					zIndex: 0,
 				},
 			},
-			text,
+			e('font', {color: colors.white}, text),
 		)
 		if (!ytsData.movies)
 			return ytsData.searched ? renderp("No movies found") : null
