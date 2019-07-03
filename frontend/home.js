@@ -23,6 +23,7 @@ class SearchQuery {
 			minRating: 0,
 			genre: "",
 			orderBy: "",
+			pageNum: 1,
 		}
 	}
 
@@ -36,8 +37,23 @@ class SearchQuery {
 	setGenre(genre) { this.state.genre = genre }
 	setOrder(order) { this.state.orderBy = order }
 
-	getPage(pageNum, renderPage, reportError) {
-		let init = "https://yts.lt/api/v2/list_movies.json?limit=16&page=" + pageNum.toString()
+	jumpPageNum(jump) {
+		if (this.state.pageNum + jump > 0)
+			this.state.pageNum += jump
+		else
+			this.state.pageNum = 1
+	}
+	resetPageNum() {
+		this.state.pageNum = 1
+	}
+	isFirstPage() {
+		return this.state.pageNum == 1
+	}
+
+	getPage(renderPage, reportError) {
+		let init = "https://yts.lt/api/v2/list_movies.json?limit=16"
+		if (this.state.pageNum)
+			init += "&page=" + this.state.pageNum
 		if (this.state.queryTerm)
 			init += "&query_term=" + this.state.queryTerm
 		if (this.state.minRating)
@@ -287,6 +303,58 @@ class ConstraintPanel extends React.Component {
 	}
 }
 
+class PageJumper extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			focused: false,
+		}
+		this.onClickHandler = this.onClickHandler.bind(this)
+	}
+
+	getStyle() {
+		const color = this.props.color
+		const outset = this.state.focused ? 7 : 2
+		return {
+			width: "8%",
+			height: "100%",
+			backgroundColor: colors.lightgrey,
+			border: `1px solid ${color}`,
+			borderRadius: "3px",
+			padding: "10px",
+			float: "left",
+			WebkitBoxShadow: `0px 0px ${outset}px ${color}`,
+			boxShadow: `0px 0px ${outset}px ${color}`,
+			color: colors.white,
+			cursor: "pointer",
+		}
+	}
+
+	onClickHandler() {
+		this.props.setPending()
+		const searchQuery = this.props.searchQuery
+		searchQuery.jumpPageNum(this.props.jump)
+		searchQuery.getPage(
+			json => { this.props.resultHandler(json.data.movies) },
+			err => { this.props.errorHandler(err) },
+		)
+	}
+
+	render() {
+		return e(
+			'input',
+			{
+				type: "submit",
+				style: this.getStyle(),
+				value: this.props.icon,
+				onMouseOver: () => {this.setState({focused: true})},
+				onMouseOut: () => {this.setState({focused: false})},
+				onClick: this.onClickHandler,
+			},
+		)
+	}
+}
+
 class SearchButton extends React.Component {
 	constructor(props) {
 		super(props)
@@ -300,13 +368,13 @@ class SearchButton extends React.Component {
 		const color = this.props.color
 		const outset = this.state.focused ? 7 : 2
 		return {
-			width: "20%",
+			width: "14%",
 			height: "100%",
 			backgroundColor: colors.lightgrey,
 			border: `1px solid ${color}`,
 			borderRadius: "3px",
 			padding: "10px",
-			float: "right",
+			float: "left",
 			WebkitBoxShadow: `0px 0px ${outset}px ${color}`,
 			boxShadow: `0px 0px ${outset}px ${color}`,
 			color: colors.white,
@@ -317,9 +385,8 @@ class SearchButton extends React.Component {
 	onClickHandler() {
 		this.props.setPending()
 		const searchQuery = this.props.searchQuery
-		const pageNum = 1
+		searchQuery.resetPageNum()
 		searchQuery.getPage(
-			pageNum,
 			json => { this.props.resultHandler(json.data.movies) },
 			err => { this.props.errorHandler(err) },
 		)
@@ -352,7 +419,7 @@ class QueryBar extends React.Component {
 		const color = this.props.color
 		const inset = this.state.focused ? 7 : 2
 		return {
-			width: "70%",
+			width: "60%",
 			height: "100%",
 			backgroundColor: colors.lightgrey,
 			border: `1px solid ${color}`,
@@ -390,7 +457,7 @@ class QueryPanel extends React.Component {
 
 	getStyle() {
 		return {
-			width: "30%",
+			width: "40%",
 			height: "0.45in",
 			padding: "0.1in",
 			textAlign: "center",
@@ -400,6 +467,13 @@ class QueryPanel extends React.Component {
 	}
 
 	render() {
+		const separate = percent => e('div', {
+			style: {
+				height: "100%",
+				width: "3%",
+				float: "left",
+			},
+		})
 		return e(
 			'div',
 			{style: this.getStyle()},
@@ -409,7 +483,7 @@ class QueryPanel extends React.Component {
 					color: this.props.color,
 					searchQuery: this.props.searchQuery,
 				}
-			),
+			), separate(),
 			e(
 				SearchButton,
 				{
@@ -418,6 +492,29 @@ class QueryPanel extends React.Component {
 					resultHandler: this.props.resultHandler,
 					errorHandler: this.props.errorHandler,
 					setPending: this.props.setPending,
+				}
+			), separate(),
+			this.props.searchQuery.isFirstPage() ? null : e(
+				PageJumper,
+				{
+					color: this.props.color,
+					searchQuery: this.props.searchQuery,
+					resultHandler: this.props.resultHandler,
+					errorHandler: this.props.errorHandler,
+					setPending: this.props.setPending,
+					jump: -1, icon: "<<",
+				}
+			),
+			this.props.searchQuery.isFirstPage() ? null : separate(),
+			e(
+				PageJumper,
+				{
+					color: this.props.color,
+					searchQuery: this.props.searchQuery,
+					resultHandler: this.props.resultHandler,
+					errorHandler: this.props.errorHandler,
+					setPending: this.props.setPending,
+					jump: 1, icon: ">>",
 				}
 			),
 		)
@@ -485,6 +582,7 @@ class MoviePortrait extends React.Component {
 			height: "70%",
 			border: `2px solid white`,
 			borderRadius: "3px",
+			WebkitBoxShadow: `0 0 ${outset}px 0 ${colors.green}`,
 			boxShadow: `0 0 ${outset}px 0 ${colors.green}`,
 			cursor: "pointer",
 		}
@@ -551,6 +649,7 @@ class DownloadProgressBar extends React.Component {
 				borderRadius: `5px ${endRadii}px ${endRadii}px 5px`,
 				width: `${percentage}%`,
 				height: "100%",
+				WebkitBoxShadow: `inset 0 0 20px 0 ${barColor}`,
 				boxShadow: `inset 0 0 20px 0 ${barColor}`,
 			},
 		})
@@ -592,6 +691,9 @@ class MovieItem extends React.Component {
 
 	render() {
 		const movieData = this.props.movieData
+		/* TODO: GET info from transmission */
+		const downloading = false
+		const downloadProgress = 35
 		return e(
 			'div',
 			{style: this.getStyle()},
@@ -604,16 +706,14 @@ class MovieItem extends React.Component {
 				e(MovieTitle, {
 					title: movieData.title_long,
 				}),
-				/* TODO: Only when set for download */
-				e(DownloadProgressBar, {
-					percentage: 100,
-				}),
+				downloading ? e(DownloadProgressBar, {
+					percentage: downloadProgress,
+				}) : null,
 			),
 		)
 	}
 }
 
-/* TODO: "Next page" button */
 class MovieList extends React.Component {
 	constructor(props) {
 		super(props)
