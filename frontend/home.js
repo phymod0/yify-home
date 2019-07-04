@@ -5,6 +5,7 @@ const e = React.createElement;
 
 const colors = {
 	green: "#00FF00",
+	blue: "#008070",
 	red: "#FF0000",
 	cyan: "#00FFFF",
 	yellow: "#FFFF00",
@@ -79,11 +80,14 @@ class SearchQuery {
 class DropDownSelectorTitleFrame extends React.Component {
 	constructor(props) {
 		super(props)
+		this.state = {
+			mouseOver: false,
+		}
 	}
 
 	getStyle() {
 		const color = this.props.color
-		const outset = this.props.open ? 7 : 2
+		const outset = this.props.open ? 8 : this.state.mouseOver ? 5 : 2
 		return {
 			width: "90%",
 			height: "100%",
@@ -106,6 +110,8 @@ class DropDownSelectorTitleFrame extends React.Component {
 			{
 				style: this.getStyle(),
 				onClick: this.props.toggler,
+				onMouseOver: () => { this.setState({mouseOver: true}) },
+				onMouseOut: () => { this.setState({mouseOver: false}) },
 			},
 			title,
 		)
@@ -417,7 +423,7 @@ class QueryBar extends React.Component {
 
 	getStyle() {
 		const color = this.props.color
-		const inset = this.state.focused ? 7 : 2
+		const inset = this.state.focused ? 15 : 5
 		return {
 			width: "60%",
 			height: "100%",
@@ -596,6 +602,7 @@ class MoviePortrait extends React.Component {
 				src: this.props.imageLink,
 				onMouseOver: () => { this.setState({mouseOver: true}) },
 				onMouseOut: () => { this.setState({mouseOver: false}) },
+				onClick: this.props.onClick,
 			},
 		)
 	}
@@ -702,6 +709,7 @@ class MovieItem extends React.Component {
 				{style: {padding: "5%", textAlign: "center"}},
 				e(MoviePortrait, {
 					imageLink: movieData.medium_cover_image,
+					onClick: this.props.openMovie,
 				}),
 				e(MovieTitle, {
 					title: movieData.title_long,
@@ -746,6 +754,7 @@ class MovieList extends React.Component {
 			(m, i) => e(MovieItem, {
 				key: i,
 				movieData: m,
+				openMovie: () => { this.props.movieOpener(m) },
 			})
 		)
 	}
@@ -759,6 +768,262 @@ class MovieList extends React.Component {
 	}
 }
 
+class OverlayButton extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			mouseOver: false,
+		}
+	}
+
+	getStyle() {
+		const outset = this.state.mouseOver ? 15 : 5
+		const color = this.props.color ? this.props.color : colors.white
+		return {
+			border: `1px solid ${color}`,
+			borderRadius: "20%",
+			WebkitBoxShadow: `0 0 ${outset}px 0 ${color}`,
+			boxShadow: `0 0 ${outset}px 0 ${color}`,
+			width: "0.6in",
+			height: "0.25in",
+			marginLeft: "5px",
+			textAlign: "center",
+			cursor: "pointer",
+			paddingLeft: "5px",
+			paddingRight: "5px",
+		}
+	}
+
+	render() {
+		const _3D_ = [e('font',{color:"#00FFFF"},'3'), e('font',{color:"#FF0000"},'D')]
+		const text = this.props.text == "3D" ? _3D_ : this.props.text
+		return e(
+			'submit',
+			{
+				style: this.getStyle(),
+				onMouseOver: () => { this.setState({mouseOver: true}) },
+				onMouseOut: () => { this.setState({mouseOver: false}) },
+				onClick: this.props.clickHandler
+			},
+			e('font', {color: colors.white}, text),
+		)
+	}
+}
+
+class OverlayDownloadProgress extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	getStyle() {
+		return {
+		}
+	}
+
+	render() {
+		return e(
+			'div',
+			{style: this.getStyle()},
+			/* TODO: Quality::Type, progress, pause/resume, cancel, delete */
+		)
+	}
+}
+
+class OverlayDownloadProgressBox extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	getStyle() {
+		return {
+		}
+	}
+
+	render() {
+		return e(
+			'div',
+			{style: this.getStyle()},
+		)
+	}
+}
+
+class OverlayOptions extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	getStyle() {
+		return {
+			width: "100%",
+			height: "50%",
+			padding: "1in",
+			position: "relative",
+			display: "inline-block",
+		}
+	}
+
+	renderText(text, fontSize, fontFamily) {
+		return e('font', {
+			style: {
+				color: colors.white,
+				marginRight: "0.1in",
+				marginTop: "0.025in",
+				fontSize: fontSize,
+				family: fontFamily,
+			},
+		}, text)
+	}
+
+	renderDownloadOptions(movie) {
+		return e(
+			'div',
+			{style: {
+				width: "100%",
+				height: "20%",
+			}},
+			this.renderText("Download: "),
+			movie.torrents.map(
+				torrent => e(OverlayButton, {
+					text: torrent.quality,
+					color: torrent.type == "bluray" ? colors.blue : null,
+				})
+			),
+		)
+	}
+
+	renderTitle(movie) {
+		return e(
+			'div',
+			{style: {
+				width: "100%",
+				height: "20%",
+			}},
+			this.renderText(movie.title_long, "xx-large"),
+		)
+	}
+
+	renderGenres(movie) {
+		const getGenreColor = genre => {
+			if (genre == "Horror")
+				return "#000060"
+			else if (genre == "Mystery")
+				return "#602060"
+			else if (genre == "Sci-Fi")
+				return "#FF0000"
+			else if (genre == "Drama")
+				return "#FF20AF"
+			else if (genre == "Fantasy")
+				return "#D08090"
+			else if (genre == "Action")
+				return "#FF7F00"
+			else if (genre == "Adventure")
+				return "#000FFF"
+			else if (genre == "Thriller")
+				return "#600000"
+			else
+				return "#FFFFFF"
+		}
+		return e(
+			'div',
+			{style: {
+				width: "100%",
+				height: "20%",
+			}},
+			// this.renderText("Genres: "),
+			movie.genres.map(
+				genre => e(OverlayButton, {
+					text: genre,
+					color: getGenreColor(genre),
+				})
+			)
+		)
+	}
+
+	renderRating(movie) {
+		return e(
+			'div',
+			{style: {
+				width: "100%",
+				height: "20%",
+			}},
+			this.renderText("IMDB rating: " + movie.rating + "/10")
+		)
+	}
+
+	renderSynopsis(movie) {
+		return e(
+			'div',
+			{style: {
+				width: "100%",
+				height: "20%",
+			}},
+			this.renderText("SYNOPSIS: " + movie.synopsis)
+		)
+	}
+
+	render() {
+		const movie = this.props.movie
+		return e(
+			'div',
+			{style: this.getStyle()},
+			this.renderTitle(movie),
+			this.renderGenres(movie),
+			this.renderRating(movie),
+			this.renderDownloadOptions(movie),
+			this.renderSynopsis(movie),
+		)
+	}
+}
+
+class MovieOverlay extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	getStyle() {
+		return {
+			position: "fixed",
+			display: "block",
+			width: "100%",
+			height: "100%",
+			top: 0,
+			left: 0,
+			right: 0,
+			bottom: 0,
+			backgroundColor: `rgba(0, 0, 0, 0.8)`,
+			display: "flex",
+		}
+	}
+
+	render() {
+		const imgLink = this.props.movie.large_cover_image
+		const outset = 15
+		return e(
+			'div',
+			{style: this.getStyle()},
+			e(
+				'div',
+				{style: {height: "100%"}},
+				e('img', {
+					style: {
+						height: "100%",
+						WebkitBoxShadow: `0 0 ${outset}px 0 ${colors.white}`,
+						boxShadow: `0 0 ${outset}px 0 ${colors.white}`,
+					},
+					src: imgLink,
+				}),
+			),
+			e(OverlayOptions, {
+				movie: this.props.movie,
+			}),
+			e(OverlayButton, {
+				text: "Back",
+				clickHandler: this.props.closer,
+			}),
+		)
+	}
+}
+
 class MainPage extends React.Component {
 	constructor(props) {
 		super(props)
@@ -768,11 +1033,14 @@ class MainPage extends React.Component {
 				err: "",
 				searched: false,
 				movies: [],
+				movieOpen: null,
 			},
 		}
 		this.searchResultHandler = this.searchResultHandler.bind(this)
 		this.searchErrorHandler = this.searchErrorHandler.bind(this)
 		this.setNetworkStatePending = this.setNetworkStatePending.bind(this)
+		this.openMovie = this.openMovie.bind(this)
+		this.closeMovie = this.closeMovie.bind(this)
 	}
 
 	getConnectivityColor(s) {
@@ -814,28 +1082,52 @@ class MainPage extends React.Component {
 		})
 	}
 
+	openMovie(movie) {
+		this.setState({
+			movieOpen: movie,
+		})
+	}
+
+	closeMovie() {
+		this.setState({
+			movieOpen: null,
+		})
+	}
+
 	render() {
 		const color = this.getConnectivityColor(this.state.connStatus)
-		return e(
-			'div',
-			{
-				style: {
-					width: "100%",
-					height: "100%",
-				}
-			},
-			e(SearchPanel, {
-				key: 0,
-				color: color,
-				resultHandler: this.searchResultHandler,
-				errorHandler: this.searchErrorHandler,
-				setPending: this.setNetworkStatePending,
-			}),
-			e(MovieList, {
+		const blurFactor = this.state.movieOpen ? 13 : 0;
+		return [
+			e(
+				'div',
+				{
+					style: {
+						width: "100%",
+						height: "100%",
+						WebkitFilter: `blur(${blurFactor}px)`,
+						MozFilter: `blur(${blurFactor}px)`,
+						OFilter: `blur(${blurFactor}px)`,
+						filter: `blur(${blurFactor}px)`,
+					},
+					key: 0,
+				},
+				e(SearchPanel, {
+					color: color,
+					resultHandler: this.searchResultHandler,
+					errorHandler: this.searchErrorHandler,
+					setPending: this.setNetworkStatePending,
+				}),
+				e(MovieList, {
+					ytsData: this.state.ytsData,
+					movieOpener: this.openMovie,
+				}),
+			),
+			this.state.movieOpen ? e(MovieOverlay, {
+				movie: this.state.movieOpen,
+				closer: this.closeMovie,
 				key: 1,
-				ytsData: this.state.ytsData,
-			})
-		)
+			}) : null,
+		]
 	}
 }
 
