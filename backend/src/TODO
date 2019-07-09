@@ -1,5 +1,3 @@
-TODO: Complete and test each module
-
 - Serialization module [Day 1]
 	o Put in serializer (Serializer) namespace
 	o Template functions for de/serializing classes and primitive types
@@ -11,11 +9,12 @@ TODO: Complete and test each module
 		+ General objects with de/serialize() methods defined
 	o Stream class
 		+ operator += to concatenate streams
-		+ int write(uint8_t*, size_t) to write max n bytes into buf
 		+ Stream(void) to load an empty stream
 		+ Stream(T) to load an object
 		+ Stream(const uint8_t*, size_t) to load from a byte array
-		+ int read(uint8_t*, size_t) to read max n bytes from buf
+
+TODO: Complete and test each module
+
 - Trie class [Day 2]
 	o Duplicate of C trie library
 - Movie class [Day 3, Day 7]

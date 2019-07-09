@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <functional>
+#include <vector>
 
 
 void* operator new(size_t sz)
@@ -31,20 +33,24 @@ void operator delete(void* ptr, size_t sz)
 }
 
 
-class A {
+class Group {
 private:
+	int len;
 	int* a;
 public:
-	A()
+	Group()
 	{
 		printf("Called constructor...\n");
-		a = new int[5];
+		a = new int[len = 5];
 	}
 	void setInt(int n, int idx)
 	{
-		a[idx] = n;
+		std::function<void(int)> set = [&](int i) {
+			a[i] = n;
+		};
+		set(idx);
 	}
-	~A()
+	~Group()
 	{
 		delete[] a;
 		printf("Called destructor...\n");
@@ -52,10 +58,21 @@ public:
 };
 
 
+void std::__throw_bad_function_call()
+{
+	printf("Hi fags...\n");
+	while (1);
+}
+
+
 int main()
 {
-	A* a = new A();
-	delete a;
+	int i = 5;
+	std::function<void(void)> print_i = [&]() {
+		printf("%d\n", i);
+	};
+
+	print_i();
 
 	return 0;
 }

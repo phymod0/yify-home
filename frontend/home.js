@@ -572,6 +572,7 @@ class SearchPanel extends React.Component {
 	}
 }
 
+/* TODO: Language */
 /* TODO: Movie download page */
 class MoviePortrait extends React.Component {
 	constructor(props) {
