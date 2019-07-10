@@ -1,7 +1,9 @@
-#include "../cpp/pair.hpp"
-#include "../cpp/alloc.hpp"
-#include "trie_c/src/trie.h"
+#include <utility>
+#include "trie.h"
 #include "trie.hpp"
+
+
+using std::pair;
 
 
 static char* _Strdup(const char* str)

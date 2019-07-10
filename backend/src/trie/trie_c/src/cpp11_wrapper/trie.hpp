@@ -1,11 +1,14 @@
-#ifndef TRIE_CPP_WRAPPER
-#define TRIE_CPP_WRAPPER
+#ifndef TRIE_CPP11_WRAPPER
+#define TRIE_CPP11_WRAPPER
 
 
 #include <stddef.h>
+#include <utility>
 
-#include "../cpp/pair.hpp"
-#include "trie_c/src/trie.h"
+#include "trie.h"
+
+
+using std::pair;
 
 
 /*
@@ -67,4 +70,4 @@ public:
 };
 
 
-#endif /* TRIE_CPP_WRAPPER */
+#endif /* TRIE_CPP11_WRAPPER */
