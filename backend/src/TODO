@@ -12,11 +12,11 @@
 		+ Stream(void) to load an empty stream
 		+ Stream(T) to load an object
 		+ Stream(const uint8_t*, size_t) to load from a byte array
+- Trie class [Day 2]
+	o Duplicate of C trie library
 
 TODO: Complete and test each module
 
-- Trie class [Day 2]
-	o Duplicate of C trie library
 - Movie class [Day 3, Day 7]
 	(Submodules (outside class)) [Day 3, Day 5]
 	o Genre set subclass [Day 3]
