@@ -13,7 +13,7 @@
 		+ Stream(T) to load an object
 		+ Stream(const uint8_t*, size_t) to load from a byte array
 - Trie class [Day 2]
-	o Duplicate of C trie library
+	o Wrapper of C trie library
 
 TODO: Complete and test each module
 
@@ -24,7 +24,7 @@ TODO: Complete and test each module
 		(Methods)
 		+ include(enum {genre_1, genre_2... genre_n}) method
 		+ matches(const Movie& m) method
-	o Preference subclass [Day 4]
+	o Criteria subclass [Day 4]
 		+ Title substring
 		+ Genre OR-list
 		+ Genre OR-blacklist
@@ -32,7 +32,7 @@ TODO: Complete and test each module
 		+ Min/max year
 		(Methods)
 		+ Setters for all variables
-		+ operator()(const Movie& m) to return satisfiability
+		+ contains(const Movie& m) to return satisfiability
 	o Order subclass [Day 5]
 		+ Order types (decide defaults)
 			= Rating
@@ -41,9 +41,10 @@ TODO: Complete and test each module
 			= Time of release
 		+ Order weight (a/descending, irrelevant)
 		(Methods)
-		+ addOrdering(ord_type, ord_weight)
-		+ operator()(const Movie& m1, const Movie& m2) to return order
+		+ addSuborder(ord_type, ord_weight)
+		+ compare()(const Movie& m1, const Movie& m2) to return order
 	(Main module) [Day 6, Day 7]
+	o Friend of Genre, Criteria and Order
 	(Data)
 	o YTS id
 	o IMDB title
@@ -58,14 +59,14 @@ TODO: Complete and test each module
 - MovieList class [Day 8]
 	o Linked list
 	(Methods)
+	o Constructor to load from file
 	o addMovie(Movie m) (or +=)
 	o sort(const Movie::Order& ord)
-	o loadFile
 - YIFY interface module [Day 9, Day 10]
 	o Internal MovieList
 	o Flush upon every write
 	(Methods)
-	o loadFile
+	o loadState
 	o start
 	o stop
 	o hasNew
