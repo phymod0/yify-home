@@ -70,6 +70,7 @@
 	o TODO: JSON serializer after completing JSON module
 
 TODO: Complete and test each module
+TODO: Create a string class and use it wherever useful
 
 - DB module [?]
 	o Internal filename
@@ -91,21 +92,25 @@ TODO: Complete and test each module
 	o size() returning a size_t
 	o Must support list iteration
 
-- Searcher class [?]
-	o For type T, internally a suffix trie (Trie<List<T>>)
+- Suffix trie class [?] (Use something else if too memory-inefficient)
+	o For type T, internally a suffix trie (Trie<List<const T&>>)
+		+ Recheck that const reference keeps temporary alive
 	(Methods)
 	o insert(const char* key, const T& val)
-	o const List<T>& searchAll(const char* keySubstr, int limit)
+	o SuffixTrie<T>::iterator searchAll(const char* keySubstr)
 
 - MovieLibrary module [?]
-	o Internal Searcher<Movie>
+	o Internal SuffixTrie<Movie>
 	o Internal movie JSON db
 	o Internal array mapping id to entryPos of movie JSON db
 	o Possible internal result cache for efficient next page, requires:
-		+ Optimistically fetching more pages from the searcher
+		+ Optimistically fetching more pages from the suffix trie
 		+ Equality overloadings for Movie::Criteria and Movie::Order
 		+ Saving the last accessed page
 		+ Requires forward and backward list iteration, so prev pointers
+		OR
+		+ getNextPage() function that assumes the previous parameters
+		+ Optional getPrevPage by maintaining a list of JSON strings
 	o Additions and retrievals must be thread-safe, use a lock
 	(Methods)
 	o Constructor taking file name, creating file if non-existant
@@ -113,8 +118,8 @@ TODO: Complete and test each module
 	o addNewMovie(const char* json, size_t len)
 	o addNewMovie(const char* json /* NULL-terminated */)
 	o getMovies(const char* str, const Criteria& c, const Order& o, int page)
-		+ str must be s search substring
-		+ Must return short movie array JSON string (from searcher)
+		+ str will be a search substring
+		+ Must return short movie array JSON string (from suffix trie)
 	o getMovieById(int id)
 		+ Must return long movie JSON string (from db object)
 
