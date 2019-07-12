@@ -18,6 +18,7 @@ Movie::Movie()
 {
 	imgLink = _Strdup("");
 	title = _Strdup("");
+	ytsId = 0;
 	rating = 0.0;
 	releaseYear = 0;
 	uploadYear = 0;
@@ -28,6 +29,7 @@ Movie::Movie(const Movie& m)
 {
 	imgLink = _Strdup(m.imgLink);
 	title = _Strdup(m.title);
+	ytsId = m.ytsId;
 	rating = m.rating;
 	releaseYear = m.releaseYear;
 	uploadYear = m.uploadYear;
@@ -40,6 +42,7 @@ Movie& Movie::operator=(const Movie& m)
 	delete[] title;
 	imgLink = _Strdup(m.imgLink);
 	title = _Strdup(m.title);
+	ytsId = m.ytsId;
 	rating = m.rating;
 	releaseYear = m.releaseYear;
 	uploadYear = m.uploadYear;
@@ -64,19 +67,28 @@ Movie::Movie(const char* jsonData, size_t len)
 	for (size_t i=0; i<nGenres; ++i)
 		genres.include(movieGenres[i].toString());
 	title = _Strdup(movie["title_long"].toString());
+	ytsId = movie["id"].toInt();
 	rating = (float)movie["rating"].toDouble();
 	releaseYear = movie["year"].toInt();
 	uploadYear = movie["date_uploaded_unix"].toInt();
 }
 
 
-void Movie::load(FILE* fd)
+const char* Movie::getTitle()
 {
+	return title;
+}
+
+
+int Movie::getYtsId()
+{
+	return ytsId;
 }
 
 
 char* Movie::getJSONStr()
 {
+	/* TODO: Complete function */
 	return nullptr;
 }
 

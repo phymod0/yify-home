@@ -1,3 +1,8 @@
+- Bare minimum cpp library [Day 0]
+	o Allocator (libc wrapper)
+	o Pairs
+	o Type traits
+
 - Serialization module [Day 1]
 	o Put in serializer (Serializer) namespace
 	o Template functions for de/serializing classes and primitive types
@@ -12,74 +17,132 @@
 		+ Stream(void) to load an empty stream
 		+ Stream(T) to load an object
 		+ Stream(const uint8_t*, size_t) to load from a byte array
+
 - Trie class [Day 2]
 	o Wrapper of C trie library
 
-TODO: Complete and test each module
+- JSON module [?]
+	o Wrapper of json-c
 
 - Movie class [Day 3, Day 7]
-	(Submodules (outside class)) [Day 3, Day 5]
+	(Submodules (nested classes)) [Day 3, Day 5]
 	o Genre set subclass [Day 3]
 		+ 32 genre bitfields
 		(Methods)
-		+ include(enum {genre_1, genre_2... genre_n}) method
-		+ matches(const Movie& m) method
+		+ include(enum {genre_1, genre_2... genre_n})
+		+ include(const char* genreName)
+		+ remove(enum {genre_1, genre_2... genre_n})
+		+ remove(const char* genreName)
+		+ empty()
+		+ matches(const Movie& m)
 	o Criteria subclass [Day 4]
-		+ Title substring
 		+ Genre OR-list
 		+ Genre OR-blacklist
 		+ Min/max rating
-		+ Min/max year
+		+ Min/max release year
+		+ Min/max upload year
 		(Methods)
 		+ Setters for all variables
 		+ contains(const Movie& m) to return satisfiability
 	o Order subclass [Day 5]
 		+ Order types (decide defaults)
 			= Rating
-			= Year of upload
-			= Title (already sorted in trie?) (remove)
-			= Time of release
+			= Time of upload
+			= Year of release
 		+ Order weight (a/descending, irrelevant)
 		(Methods)
-		+ addSuborder(ord_type, ord_weight)
-		+ compare()(const Movie& m1, const Movie& m2) to return order
+		+ prioritize(ord_type, ord_weight)
+		+ prioritize(<ord_type, ord_weight>)
+		+ operator()(const Movie& m1, const Movie& m2) to return order
+		+ compare(const Movie& m1, const Movie& m2) to return order
 	(Main module) [Day 6, Day 7]
-	o Friend of Genre, Criteria and Order
 	(Data)
 	o YTS id
-	o IMDB title
-	o IMDB summary
-	o Genre set (list)
-	o Major/minor rating
+	o Title
+	o Genre set (bitfield)
+	o Rating
 	o Year of release
 	o Time of upload
 	(Methods)
-	o Constructor to read from JSON and JSON serializer [Day 6]
-	o load(FILE* fd) and write(FILE* fd) [Day 7]
-- MovieList class [Day 8]
-	o Linked list
+	o Constructor to read from JSON
+	o Title getter
+	o ID getter
+	o TODO: JSON serializer after completing JSON module
+
+TODO: Complete and test each module
+
+- DB module [?]
+	o Internal filename
+	o Close on every operation
+	(Methods/operations)
+	o Constructor taking file name, creating file if non-existant
+	o forEach((buffer, length) => {})
+	o forEach((buffer, length, entryPos) => {})
+	o addEntry(buffer, length) returning new entryPos
+	o forEntryAt(entryPos, (buffer, length) => {})
+	o [Optional] removeEntryAt(entryPos)
+
+- List class [?]
 	(Methods)
-	o Constructor to load from file
-	o addMovie(Movie m) (or +=)
-	o sort(const Movie::Order& ord)
-- YIFY interface module [Day 9, Day 10]
-	o Internal MovieList
-	o Flush upon every write
+	o operator+=(const ListItem& item)
+	o operator+=(const List& List)
+	o filter((const ListItem&) => true/false) returning List of T& refs
+	o sort((const ListItem&, const ListItem&) => -1/0/1)
+	o size() returning a size_t
+	o Must support list iteration
+
+- Searcher class [?]
+	o For type T, internally a suffix trie (Trie<List<T>>)
 	(Methods)
-	o loadState
+	o insert(const char* key, const T& val)
+	o const List<T>& searchAll(const char* keySubstr, int limit)
+
+- MovieLibrary module [?]
+	o Internal Searcher<Movie>
+	o Internal movie JSON db
+	o Internal array mapping id to entryPos of movie JSON db
+	o Possible internal result cache for efficient next page, requires:
+		+ Optimistically fetching more pages from the searcher
+		+ Equality overloadings for Movie::Criteria and Movie::Order
+		+ Saving the last accessed page
+		+ Requires forward and backward list iteration, so prev pointers
+	o Additions and retrievals must be thread-safe, use a lock
+	(Methods)
+	o Constructor taking file name, creating file if non-existant
+	o setPageSize()
+	o addNewMovie(const char* json, size_t len)
+	o addNewMovie(const char* json /* NULL-terminated */)
+	o getMovies(const char* str, const Criteria& c, const Order& o, int page)
+		+ str must be s search substring
+		+ Must return short movie array JSON string (from searcher)
+	o getMovieById(int id)
+		+ Must return long movie JSON string (from db object)
+
+- YIFY scraper module [?]
+	o Internal MovieLibrary
+	o Internal scraping thread
+	(Methods)
+	o Constructor taking MovieLibrary object reference
+	o setRefreshInterval(set in several minutes)
 	o start
 	o stop
-	o hasNew
-	o getList(const Movie::Preference& pref, const Movie::Order& ord)
-- Transmissions interface module [Day 11, Day 12]
-	o availableMemory()
-	o startDownload()
-	o pauseDownload()
-	o cancelDownload()
-	o deleteFile()
-	o getProgress()
-	o getFilePath()
-- Main CGI request handler [Day 13]
-	o Receive constraint and order from CGI application set
-- CGI application set: [Day 14]
-	o Send constraint and order to main request handler
+
+- REST server framework [?]
+	(Methods)
+	o Callback function taking key->val mappings from GET string and URI
+	o start
+	o stop
+
+- Transmission interface module [?]
+	<Takes yify id, reports all and average progress>
+	+ availableMemory
+	+ startDownload
+	+ pauseDownload
+	+ cancelDownload
+	+ deleteFile
+	+ getProgress
+	+ getFileURI
+
+- Main yify-home thread [?]
+	o Use REST framework, YIFY scraper, MovieLibrary, TransmissionsIface
+	o Should respond to search queries, torrent queries and movie queries

@@ -80,17 +80,17 @@ public:
 	Movie(const Movie& m);
 	Movie& operator=(const Movie& m);
 	~Movie();
-	/* TODO: Redecide following member functions */
 	Movie(const char* jsonData, size_t len);
-	void load(FILE* fd);
+	const char* getTitle();
+	int getYtsId();
 	char* getJSONStr();
 
 private:
 	const char *imgLink, *title;
+	int ytsId;
 	GenreSet genres;
 	float rating;
-	int releaseYear;
-	int uploadYear;
+	int releaseYear, uploadYear;
 };
 
 
