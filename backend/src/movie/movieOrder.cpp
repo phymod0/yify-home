@@ -4,8 +4,8 @@
 Movie::Order::Order()
 {
 	priorities[0] = priority(ReleaseYear, Descending);
-	priorities[1] = priority(Rating, Descending);
-	priorities[2] = priority(UploadYear, Irrelevant);
+	priorities[1] = priority(UploadYear, Descending);
+	priorities[2] = priority(Rating, Descending);
 }
 
 

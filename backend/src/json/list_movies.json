@@ -1,0 +1,31 @@
+"movies":
+[
+	{
+		"id":12865,
+		"url":"https:\/\/yts.lt\/movie\/germany-pale-mother-1980",
+		"imdb_code":"tt0080616",
+		"title":"Germany Pale Mother",
+		"title_english":"Germany Pale Mother",
+		"title_long":"Germany Pale Mother (1980)",
+		"slug":"germany-pale-mother-1980",
+		"year":1980,
+		"rating":7.2,
+		"runtime":0,
+		"genres":["Drama","History","War"],
+		"summary":"Germany 1939. Hans and Lene marry the day before the war breaks out, and Hans is sent to the Eastern front. During a bombing raid their daughter Anna is born. The house is destroyed and Lene and Anna moves in with relatives in Berlin. Hans survives the war but he is not the same person as in 1939, and he and Lene find it difficult to live together again.",
+		"description_full":"Germany 1939. Hans and Lene marry the day before the war breaks out, and Hans is sent to the Eastern front. During a bombing raid their daughter Anna is born. The house is destroyed and Lene and Anna moves in with relatives in Berlin. Hans survives the war but he is not the same person as in 1939, and he and Lene find it difficult to live together again.",
+		"synopsis":"Germany 1939. Hans and Lene marry the day before the war breaks out, and Hans is sent to the Eastern front. During a bombing raid their daughter Anna is born. The house is destroyed and Lene and Anna moves in with relatives in Berlin. Hans survives the war but he is not the same person as in 1939, and he and Lene find it difficult to live together again.",
+		"yt_trailer_code":"",
+		"language":"English",
+		"mpa_rating":"",
+		"background_image":"https:\/\/yts.lt\/assets\/images\/movies\/germany_pale_mother_1980\/background.jpg",
+		"background_image_original":"https:\/\/yts.lt\/assets\/images\/movies\/germany_pale_mother_1980\/background.jpg",
+		"small_cover_image":"https:\/\/yts.lt\/assets\/images\/movies\/germany_pale_mother_1980\/small-cover.jpg",
+		"medium_cover_image":"https:\/\/yts.lt\/assets\/images\/movies\/germany_pale_mother_1980\/medium-cover.jpg",
+		"large_cover_image":"https:\/\/yts.lt\/assets\/images\/movies\/germany_pale_mother_1980\/large-cover.jpg",
+		"state":"ok",
+		"torrents":[{"url":"https:\/\/yts.lt\/torrent\/download\/A30240C5797FD3C089A465C4AF994AE1C984030F","hash":"A30240C5797FD3C089A465C4AF994AE1C984030F","quality":"720p","type":"bluray","seeds":84,"peers":73,"size":"1.23 GB","size_bytes":1320702444,"date_uploaded":"2019-07-12 01:07:22","date_uploaded_unix":1562886442},{"url":"https:\/\/yts.lt\/torrent\/download\/D6E2E8B49DD93D62B27421DAFB386AD4DEF3B27A","hash":"D6E2E8B49DD93D62B27421DAFB386AD4DEF3B27A","quality":"1080p","type":"bluray","seeds":44,"peers":62,"size":"2.39 GB","size_bytes":2566242959,"date_uploaded":"2019-07-12 04:04:32","date_uploaded_unix":1562897072}],
+		"date_uploaded":"2019-07-12 01:07:22",
+		"date_uploaded_unix":1562886442
+	},
+]

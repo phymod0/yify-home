@@ -20,14 +20,18 @@ public:
 		Romance,
 		Comedy,
 		Adventure,
+		Unregistered,
 	};
 
 	class GenreSet {
 		uint32_t gBitfield;
+		Genre gCode(const char* gStr);
 	public:
 		GenreSet();
 		void include(Genre g);
+		void include(const char* gStr);
 		void remove(Genre g);
+		void remove(const char* gStr);
 		bool empty() const;
 		bool matches(const Movie& m) const;
 	};
@@ -76,17 +80,17 @@ public:
 	Movie(const Movie& m);
 	Movie& operator=(const Movie& m);
 	~Movie();
+	/* TODO: Redecide following member functions */
 	Movie(const char* jsonData, size_t len);
 	void load(FILE* fd);
 	char* getJSONStr();
 
 private:
-	const char *ytsId, *title;
+	const char *imgLink, *title;
 	GenreSet genres;
 	float rating;
 	int releaseYear;
 	int uploadYear;
-	int fdPosition;
 };
 
 
