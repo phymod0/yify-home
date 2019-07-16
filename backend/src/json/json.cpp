@@ -1,7 +1,17 @@
 #include <stdio.h>
+#include <string.h>
 #include <json-c/json_tokener.h>
 
 #include "json.hpp"
+
+
+static char* _Strdup(const char* str)
+{
+	size_t len = strlen(str);
+	char* result = new char[len + 1];
+	memcpy(result, str, len + 1);
+	return result;
+}
 
 
 JSONObject::JSONObject()
@@ -110,39 +120,81 @@ const char* JSONObject::toString() const
 }
 
 
-void JSONObject::set(const char* key, bool val)
+void JSONObject::assign(const char* key, bool val)
 {
 	json_object_object_add(obj, key, json_object_new_boolean(val));
 }
 
 
-void JSONObject::set(const char* key, int32_t val)
+void JSONObject::assign(const char* key, int32_t val)
 {
 	json_object_object_add(obj, key, json_object_new_int(val));
 }
 
 
-void JSONObject::set(const char* key, int64_t val)
+void JSONObject::assign(const char* key, int64_t val)
 {
 	json_object_object_add(obj, key, json_object_new_int64(val));
 }
 
 
-void JSONObject::set(const char* key, double val)
+void JSONObject::assign(const char* key, double val)
 {
 	json_object_object_add(obj, key, json_object_new_double(val));
 }
 
 
-void JSONObject::set(const char* key, const char* val)
+void JSONObject::assign(const char* key, const char* val)
 {
 	json_object_object_add(obj, key, json_object_new_string(val));
+}
+
+
+void JSONObject::assign(const char* key, const JSONObject& newObj)
+{
+	json_object_object_add(obj, key, json_object_get(newObj.obj));
+}
+
+
+void JSONObject::arrayAppend(bool val)
+{
+	json_object_array_add(obj, json_object_new_boolean(val));
+}
+
+
+void JSONObject::arrayAppend(int32_t val)
+{
+	json_object_array_add(obj, json_object_new_int(val));
+}
+
+
+void JSONObject::arrayAppend(int64_t val)
+{
+	json_object_array_add(obj, json_object_new_int64(val));
+}
+
+
+void JSONObject::arrayAppend(double val)
+{
+	json_object_array_add(obj, json_object_new_double(val));
+}
+
+
+void JSONObject::arrayAppend(const char* val)
+{
+	json_object_array_add(obj, json_object_new_string(val));
 }
 
 
 void JSONObject::arrayAppend(const JSONObject& newObj)
 {
 	json_object_array_add(obj, json_object_get(newObj.obj));
+}
+
+
+char* JSONObject::strCopy() const
+{
+	return _Strdup(json_object_to_json_string_ext(obj, JSON_C_TO_STRING_PRETTY));
 }
 
 
@@ -171,14 +223,17 @@ int main()
 	JSONObject J(str);
 	JSONObject movieList = J["movies"];
 	JSONObject newMovie("{}");
-	newMovie.set("title", "Hello world!");
-	newMovie.set("summary", "Random HelloWood garbage");
+	newMovie.assign("title", "Hello world!");
+	newMovie.assign("summary", "Random HelloWood garbage");
 	movieList.arrayAppend(newMovie);
 	JSONObject secondMovie = movieList[1];
 	const char* title = secondMovie["title"].toString();
 	const char* summary = secondMovie["summary"].toString();
 	printf("%s:\n\n\t%s\n\n", title, summary);
-	J.print();
+	// J.print();
+	char* newStr = J.strCopy();
+	printf("%s\n", newStr);
+	delete[] newStr;
 
 	delete[] str;
 	return 0;

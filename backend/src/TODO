@@ -21,7 +21,7 @@
 - Trie class [Day 2]
 	o Wrapper of C trie library
 
-- JSON module [?]
+- JSON module [[Done]]
 	o Wrapper of json-c
 
 - Movie class [Day 3, Day 7]
@@ -67,7 +67,7 @@
 	o Constructor to read from JSON
 	o Title getter
 	o ID getter
-	o TODO: JSON serializer after completing JSON module
+	o JSON serializer
 
 TODO: Complete and test each module
 TODO: Create a string class and use it wherever useful

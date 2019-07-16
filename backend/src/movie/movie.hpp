@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "../cpp/pair.hpp"
+#include "../cpp_compat/pair.hpp"
 
 
 class Movie {
@@ -25,8 +25,20 @@ public:
 
 	class GenreSet {
 		uint32_t gBitfield;
-		Genre gCode(const char* gStr);
+		Genre gCode(const char* gStr) const;
+		const char* gStr(Genre gCode) const;
 	public:
+		class iterator {
+			friend class GenreSet;
+			int currentBit;
+			const GenreSet& gs;
+		public:
+			iterator(const GenreSet& gs);
+			const char* operator*() const;
+			iterator& operator++();
+			bool operator!=(const iterator& it) const;
+			bool operator==(const iterator& it) const;
+		};
 		GenreSet();
 		void include(Genre g);
 		void include(const char* gStr);
@@ -34,6 +46,8 @@ public:
 		void remove(const char* gStr);
 		bool empty() const;
 		bool matches(const Movie& m) const;
+		iterator begin() const;
+		iterator end() const;
 	};
 
 	class Criteria {
@@ -70,8 +84,8 @@ public:
 		Order();
 		void prioritize(Type t, Weight w);
 		void prioritize(const priority& p);
-		int operator()(const Movie& m1, const Movie& m2);
-		int compare(const Movie& m1, const Movie& m2);
+		int operator()(const Movie& m1, const Movie& m2) const;
+		int compare(const Movie& m1, const Movie& m2) const;
 	private:
 		priority priorities[3];
 	};
@@ -81,10 +95,11 @@ public:
 	Movie& operator=(const Movie& m);
 	~Movie();
 	Movie(const char* jsonData, size_t len);
-	const char* getTitle();
-	int getYtsId();
-	char* getJSONStr();
+	const char* getTitle() const;
+	int getYtsId() const;
+	char* getJSONStrCopy() const;
 
+	/* TODO: Change cpp to cpp_compat */
 private:
 	const char *imgLink, *title;
 	int ytsId;

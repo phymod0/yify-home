@@ -20,7 +20,7 @@ void Movie::Order::prioritize(Type t, Weight w)
 }
 
 
-int Movie::Order::operator()(const Movie& m1, const Movie& m2)
+int Movie::Order::operator()(const Movie& m1, const Movie& m2) const
 {
 	auto cmp = [&](const priority& p) -> int {
 		Type t = p.first;
@@ -52,10 +52,12 @@ int Movie::Order::operator()(const Movie& m1, const Movie& m2)
 }
 
 
-int Movie::Order::compare(const Movie& m1, const Movie& m2)
+int Movie::Order::compare(const Movie& m1, const Movie& m2) const
 {
 	return this->operator()(m1, m2);
 }
 
 
+#if 0
 int main() {return 0;}
+#endif

@@ -4,7 +4,7 @@
 
 #include <stddef.h>
 
-#include "../cpp/pair.hpp"
+#include "../../cpp_compat/pair.hpp"
 #include "trie_c/src/trie.h"
 
 

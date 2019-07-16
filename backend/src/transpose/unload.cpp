@@ -115,10 +115,10 @@ void Transpose::unloadCString(char*& str)
 		return;
 
 	if (head->dataExternal) {
-		str = reinterpret_cast<char*>(new uint8_t[head->dataLen]);
+		str = static_cast<char*>(new uint8_t[head->dataLen]);
 		memcpy(str, head->data, head->dataLen);
 	} else {
-		str = reinterpret_cast<char*>(head->data);
+		str = static_cast<char*>(head->data);
 		/* XXX: To not internally free the data */
 		head->dataExternal = true;
 	}

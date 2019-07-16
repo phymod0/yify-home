@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "../cpp/alloc.hpp"
+#include "../cpp_compat/alloc.hpp"
 #include "../json/json.hpp"
 #include "movie.hpp"
 
@@ -74,26 +74,42 @@ Movie::Movie(const char* jsonData, size_t len)
 }
 
 
-const char* Movie::getTitle()
+const char* Movie::getTitle() const
 {
 	return title;
 }
 
 
-int Movie::getYtsId()
+int Movie::getYtsId() const
 {
 	return ytsId;
 }
 
 
-char* Movie::getJSONStr()
+char* Movie::getJSONStrCopy() const
 {
-	/* TODO: Complete function */
-	return nullptr;
+	JSONObject movieObj("{}");
+	JSONObject genreObj("[]");
+	movieObj.assign("id", ytsId);
+	movieObj.assign("title", title);
+	movieObj.assign("title_long", title);
+	movieObj.assign("year", releaseYear);
+	movieObj.assign("rating", (double)rating);
+	for (const char* genreName : genres)
+		genreObj.arrayAppend(genreName);
+	movieObj.assign("genres", genreObj);
+	movieObj.assign("medium_cover_image", imgLink);
+	movieObj.assign("date_uploaded_unix", (int64_t)uploadYear);
+	return movieObj.strCopy();
 }
 
 
+#if 0
 int main()
 {
-	return 0;
+	Movie m;
+	char* str = m.getJSONStrCopy();
+	printf("%s\n", str);
+	delete[] str;
 }
+#endif
