@@ -70,7 +70,6 @@
 	o JSON serializer
 
 TODO: Complete and test each module
-TODO: Create a string class and use it wherever useful
 
 - DB module [?]
 	o Internal filename

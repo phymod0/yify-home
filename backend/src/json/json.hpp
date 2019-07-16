@@ -2,8 +2,9 @@
 #define JSON_WRAPPER
 
 
-#include <stdio.h>
 #include <json-c/json_tokener.h>
+
+#include "../cpp_compat/string.hpp"
 
 
 class JSONObject {
@@ -15,6 +16,7 @@ public:
 	JSONObject& operator=(const JSONObject& jobj);
 	~JSONObject();
 	JSONObject(const char* JSONStr);
+	JSONObject(const string& JSONStr);
 	JSONObject(const char* JSONStr, size_t len);
 	size_t arraySize() const;
 	JSONObject operator[](int idx) const;
@@ -23,7 +25,7 @@ public:
 	int32_t toInt() const;
 	int64_t toLongLongInt() const;
 	double toDouble() const;
-	const char* toString() const;
+	string toString() const;
 	void assign(const char* key, bool val);
 	void assign(const char* key, int32_t val);
 	void assign(const char* key, int64_t val);
@@ -36,7 +38,7 @@ public:
 	void arrayAppend(double val);
 	void arrayAppend(const char* val);
 	void arrayAppend(const JSONObject& obj);
-	char* strCopy() const;
+	string serialize() const;
 	void print() const;
 };
 

@@ -3,15 +3,7 @@
 #include <json-c/json_tokener.h>
 
 #include "json.hpp"
-
-
-static char* _Strdup(const char* str)
-{
-	size_t len = strlen(str);
-	char* result = new char[len + 1];
-	memcpy(result, str, len + 1);
-	return result;
-}
+#include "../cpp_compat/string.hpp"
 
 
 JSONObject::JSONObject()
@@ -54,6 +46,15 @@ JSONObject::JSONObject(const char* JSONStr)
 {
 	root = true;
 	obj = json_tokener_parse(JSONStr);
+}
+
+
+JSONObject::JSONObject(const string& JSONStr)
+{
+	root = true;
+	json_tokener* tok = json_tokener_new();
+	obj = json_tokener_parse_ex(tok, JSONStr.c_str(), JSONStr.length());
+	json_tokener_free(tok);
 }
 
 
@@ -114,9 +115,9 @@ double JSONObject::toDouble() const
 }
 
 
-const char* JSONObject::toString() const
+string JSONObject::toString() const
 {
-	return json_object_get_string(obj);
+	return string(json_object_get_string(obj));
 }
 
 
@@ -192,9 +193,9 @@ void JSONObject::arrayAppend(const JSONObject& newObj)
 }
 
 
-char* JSONObject::strCopy() const
+string JSONObject::serialize() const
 {
-	return _Strdup(json_object_to_json_string_ext(obj, JSON_C_TO_STRING_PRETTY));
+	return string(json_object_to_json_string_ext(obj, JSON_C_TO_STRING_PRETTY));
 }
 
 
@@ -220,20 +221,20 @@ int main()
 	fclose(fd);
 
 	printf("\n");
-	JSONObject J(str);
+	string __s = string(str);
+	JSONObject J(__s);
 	JSONObject movieList = J["movies"];
 	JSONObject newMovie("{}");
 	newMovie.assign("title", "Hello world!");
 	newMovie.assign("summary", "Random HelloWood garbage");
 	movieList.arrayAppend(newMovie);
 	JSONObject secondMovie = movieList[1];
-	const char* title = secondMovie["title"].toString();
-	const char* summary = secondMovie["summary"].toString();
+	const char* title = secondMovie["title"].toString().c_str();
+	const char* summary = secondMovie["summary"].toString().c_str();
 	printf("%s:\n\n\t%s\n\n", title, summary);
 	// J.print();
-	char* newStr = J.strCopy();
-	printf("%s\n", newStr);
-	delete[] newStr;
+	string newStr = J.serialize();
+	printf("%s\n", newStr.c_str());
 
 	delete[] str;
 	return 0;

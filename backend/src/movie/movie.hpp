@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #include "../cpp_compat/pair.hpp"
+#include "../cpp_compat/string.hpp"
 
 
 class Movie {
@@ -42,8 +43,10 @@ public:
 		GenreSet();
 		void include(Genre g);
 		void include(const char* gStr);
+		void include(const string& gStr);
 		void remove(Genre g);
 		void remove(const char* gStr);
+		void remove(const string& gStr);
 		bool empty() const;
 		bool matches(const Movie& m) const;
 		iterator begin() const;
@@ -91,16 +94,13 @@ public:
 	};
 
 	Movie();
-	Movie(const Movie& m);
-	Movie& operator=(const Movie& m);
-	~Movie();
 	Movie(const char* jsonData, size_t len);
-	const char* getTitle() const;
+	string getTitle() const;
 	int getYtsId() const;
-	char* getJSONStrCopy() const;
+	string serialize() const;
 
 private:
-	const char *imgLink, *title;
+	string imgLink, title;
 	int ytsId;
 	GenreSet genres;
 	float rating;

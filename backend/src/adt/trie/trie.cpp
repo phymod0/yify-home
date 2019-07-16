@@ -208,6 +208,7 @@ typename subtrie<T>::iterator subtrie<T>::end()
 }
 
 
+#if 0
 #include <stdio.h>
 
 
@@ -244,7 +245,6 @@ public:
 };
 
 
-#if 0
 int main()
 {
 	trie<double> T;

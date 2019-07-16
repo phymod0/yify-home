@@ -1,59 +1,19 @@
 #include <string.h>
 
 #include "../cpp_compat/alloc.hpp"
+#include "../cpp_compat/string.hpp"
 #include "../json/json.hpp"
 #include "movie.hpp"
 
 
-static char* _Strdup(const char* str)
-{
-	size_t len = strlen(str);
-	char* result = new char[len + 1];
-	memcpy(result, str, len + 1);
-	return result;
-}
-
-
 Movie::Movie()
 {
-	imgLink = _Strdup("");
-	title = _Strdup("");
+	imgLink = string();
+	title = string();
 	ytsId = 0;
 	rating = 0.0;
 	releaseYear = 0;
 	uploadYear = 0;
-}
-
-
-Movie::Movie(const Movie& m)
-{
-	imgLink = _Strdup(m.imgLink);
-	title = _Strdup(m.title);
-	ytsId = m.ytsId;
-	rating = m.rating;
-	releaseYear = m.releaseYear;
-	uploadYear = m.uploadYear;
-}
-
-
-Movie& Movie::operator=(const Movie& m)
-{
-	delete[] imgLink;
-	delete[] title;
-	imgLink = _Strdup(m.imgLink);
-	title = _Strdup(m.title);
-	ytsId = m.ytsId;
-	rating = m.rating;
-	releaseYear = m.releaseYear;
-	uploadYear = m.uploadYear;
-	return *this;
-}
-
-
-Movie::~Movie()
-{
-	delete[] imgLink;
-	delete[] title;
 }
 
 
@@ -63,10 +23,10 @@ Movie::Movie(const char* jsonData, size_t len)
 	JSONObject movieGenres = movie["genres"];
 	const size_t nGenres = movieGenres.arraySize();
 
-	imgLink = _Strdup(movie["medium_cover_image"].toString());
+	imgLink = movie["medium_cover_image"].toString();
 	for (size_t i=0; i<nGenres; ++i)
 		genres.include(movieGenres[i].toString());
-	title = _Strdup(movie["title_long"].toString());
+	title = movie["title_long"].toString();
 	ytsId = movie["id"].toInt();
 	rating = (float)movie["rating"].toDouble();
 	releaseYear = movie["year"].toInt();
@@ -74,7 +34,7 @@ Movie::Movie(const char* jsonData, size_t len)
 }
 
 
-const char* Movie::getTitle() const
+string Movie::getTitle() const
 {
 	return title;
 }
@@ -86,7 +46,7 @@ int Movie::getYtsId() const
 }
 
 
-char* Movie::getJSONStrCopy() const
+string Movie::serialize() const
 {
 	JSONObject movieObj("{}");
 	JSONObject genreObj("[]");
@@ -100,7 +60,7 @@ char* Movie::getJSONStrCopy() const
 	movieObj.assign("genres", genreObj);
 	movieObj.assign("medium_cover_image", imgLink);
 	movieObj.assign("date_uploaded_unix", (int64_t)uploadYear);
-	return movieObj.strCopy();
+	return movieObj.serialize();
 }
 
 
@@ -108,8 +68,7 @@ char* Movie::getJSONStrCopy() const
 int main()
 {
 	Movie m;
-	char* str = m.getJSONStrCopy();
-	printf("%s\n", str);
-	delete[] str;
+	string str = m.serialize();
+	printf("%s\n", str.c_str());
 }
 #endif

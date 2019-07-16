@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "../cpp_compat/string.hpp"
 #include "movie.hpp"
 
 
@@ -102,6 +103,12 @@ void Movie::GenreSet::include(const char* gStr)
 }
 
 
+void Movie::GenreSet::include(const string& gStr)
+{
+	include(gCode(gStr.c_str()));
+}
+
+
 void Movie::GenreSet::remove(Genre g)
 {
 	gBitfield &= ~(uint32_t)(1 << static_cast<int>(g));
@@ -111,6 +118,12 @@ void Movie::GenreSet::remove(Genre g)
 void Movie::GenreSet::remove(const char* gStr)
 {
 	remove(gCode(gStr));
+}
+
+
+void Movie::GenreSet::remove(const string& gStr)
+{
+	remove(gCode(gStr.c_str()));
 }
 
 
