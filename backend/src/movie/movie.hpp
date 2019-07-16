@@ -99,7 +99,6 @@ public:
 	int getYtsId() const;
 	char* getJSONStrCopy() const;
 
-	/* TODO: Change cpp to cpp_compat */
 private:
 	const char *imgLink, *title;
 	int ytsId;
