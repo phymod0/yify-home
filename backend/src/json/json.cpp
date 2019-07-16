@@ -56,7 +56,7 @@ JSONObject::JSONObject(const char* JSONStr, size_t len)
 }
 
 
-size_t JSONObject::arraySize()
+size_t JSONObject::arraySize() const
 {
 	return obj ? json_object_array_length(obj) : 0;
 }
@@ -80,37 +80,73 @@ JSONObject JSONObject::operator[](const char* key) const
 }
 
 
-bool JSONObject::toBool()
+bool JSONObject::toBool() const
 {
 	return json_object_get_boolean(obj);
 }
 
 
-int32_t JSONObject::toInt()
+int32_t JSONObject::toInt() const
 {
 	return json_object_get_int(obj);
 }
 
 
-int64_t JSONObject::toLongLongInt()
+int64_t JSONObject::toLongLongInt() const
 {
 	return json_object_get_int64(obj);
 }
 
 
-double JSONObject::toDouble()
+double JSONObject::toDouble() const
 {
 	return json_object_get_double(obj);
 }
 
 
-const char* JSONObject::toString()
+const char* JSONObject::toString() const
 {
 	return json_object_get_string(obj);
 }
 
 
-void JSONObject::print()
+void JSONObject::set(const char* key, bool val)
+{
+	json_object_object_add(obj, key, json_object_new_boolean(val));
+}
+
+
+void JSONObject::set(const char* key, int32_t val)
+{
+	json_object_object_add(obj, key, json_object_new_int(val));
+}
+
+
+void JSONObject::set(const char* key, int64_t val)
+{
+	json_object_object_add(obj, key, json_object_new_int64(val));
+}
+
+
+void JSONObject::set(const char* key, double val)
+{
+	json_object_object_add(obj, key, json_object_new_double(val));
+}
+
+
+void JSONObject::set(const char* key, const char* val)
+{
+	json_object_object_add(obj, key, json_object_new_string(val));
+}
+
+
+void JSONObject::arrayAppend(const JSONObject& newObj)
+{
+	json_object_array_add(obj, json_object_get(newObj.obj));
+}
+
+
+void JSONObject::print() const
 {
 	printf("%s\n", json_object_to_json_string_ext(obj, JSON_C_TO_STRING_PRETTY));
 }
@@ -120,7 +156,7 @@ void JSONObject::print()
 int main()
 {
 	char* str = new char[65536];
-	FILE* fd = fopen("../json-c/list_movies.json", "r");
+	FILE* fd = fopen("list_movies.json", "r");
 	if (not fd) {
 		printf("Failed to open file\n");
 		return -1;
@@ -133,11 +169,16 @@ int main()
 
 	printf("\n");
 	JSONObject J(str);
-	JSONObject movieList = J["data"]["movies"];
+	JSONObject movieList = J["movies"];
+	JSONObject newMovie("{}");
+	newMovie.set("title", "Hello world!");
+	newMovie.set("summary", "Random HelloWood garbage");
+	movieList.arrayAppend(newMovie);
 	JSONObject secondMovie = movieList[1];
 	const char* title = secondMovie["title"].toString();
 	const char* summary = secondMovie["summary"].toString();
 	printf("%s:\n\n\t%s\n\n", title, summary);
+	J.print();
 
 	delete[] str;
 	return 0;

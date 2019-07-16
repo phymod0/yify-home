@@ -1,4 +1,4 @@
-"movies":
+{"movies":
 [
 	{
 		"id":12865,
@@ -28,4 +28,4 @@
 		"date_uploaded":"2019-07-12 01:07:22",
 		"date_uploaded_unix":1562886442
 	},
-]
+]}
