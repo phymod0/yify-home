@@ -69,8 +69,6 @@
 	o ID getter
 	o JSON serializer
 
-TODO: Complete and test each module
-
 - DB module [?]
 	o Internal filename
 	o Close on every operation
@@ -81,6 +79,8 @@ TODO: Complete and test each module
 	o addEntry(buffer, length) returning new entryPos
 	o forEntryAt(entryPos, (buffer, length) => {})
 	o [Optional] removeEntryAt(entryPos)
+
+TODO: Complete and test each module
 
 - List class [?]
 	(Methods)
