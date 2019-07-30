@@ -16,11 +16,14 @@ http.createServer(function(request, response) {
 
 	try {
 		var filePath = decodeURIComponent(request.url.split("localhost"))
+        if (filePath == "" || filePath == "/")
+            // Empty URI, point to default
+            filePath = "/index.html"
         if (!filePath.startsWith("/root"))
             // Relative path
             filePath = "." + filePath
-		var stat = fileSystem.statSync(filePath)
 		console.log("Got a request for " + filePath)
+		var stat = fileSystem.statSync(filePath)
 	} catch {
 		console.log(`File at ${filePath} not found...`)
 		return
