@@ -6,4 +6,5 @@ LAN-based web application for downloading and viewing YIFY movies.
 
 # Run
 ./start.sh
+
 Interface should be available on localhost
