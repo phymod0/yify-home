@@ -1601,7 +1601,7 @@ class MainPage extends React.Component {
 				movies: [],
 				movieOpen: null,
 			},
-            downloadPageOpen: false,
+            downloadPageOpen: true,
 		}
 		this.searchResultHandler = this.searchResultHandler.bind(this)
 		this.searchErrorHandler = this.searchErrorHandler.bind(this)
